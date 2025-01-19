@@ -14,8 +14,6 @@ def create_section(title, content, emoji="", extra_classes=""):
     return f"""
         <div class="section-container {extra_classes}">
             <h3 class="section-header">{emoji} {title}</h3>
-            <div class="section-content">
-                {content}
-            </div>
+            {content}
         </div>
     """ 
