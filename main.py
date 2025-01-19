@@ -56,7 +56,7 @@ if menu_selection == "Instructions":
     st.write("Welcome to the Customer Data Analysis Tool!")
     
     # Application Goal section
-    application_goal_content = load_template("application_goal.html")
+    application_goal_content = load_template("application-goal")
     st.markdown(create_section(
         "APPLICATION GOAL",
         application_goal_content,
@@ -64,7 +64,7 @@ if menu_selection == "Instructions":
     ), unsafe_allow_html=True)
     
     # Workflow section
-    workflow_content = load_template("workflow.html")
+    workflow_content = load_template("workflow")
     st.markdown(create_section(
         "WORKFLOW",
         workflow_content,
@@ -72,7 +72,7 @@ if menu_selection == "Instructions":
     ), unsafe_allow_html=True)
     
     # Getting Started section
-    getting_started_content = load_template("getting_started.html")
+    getting_started_content = load_template("getting-started")
     st.markdown(create_section(
         "GETTING STARTED",
         getting_started_content,

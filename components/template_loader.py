@@ -1,12 +1,16 @@
-def load_template(template_name):
+from bs4 import BeautifulSoup
+
+def load_template(template_id):
     """
-    Loads a template file from the templates directory.
+    Loads a specific template from the templates file.
     
     Args:
-        template_name (str): Name of the template file
+        template_id (str): ID of the template to load (e.g., 'application-goal')
     
     Returns:
-        str: Contents of the template file
+        str: Contents of the template
     """
-    with open(f"templates/{template_name}", "r", encoding="utf-8") as f:
-        return f.read() 
+    with open("templates/templates.html", "r", encoding="utf-8") as f:
+        soup = BeautifulSoup(f.read(), 'html.parser')
+        template = soup.find('template', id=template_id)
+        return template.decode_contents() if template else "" 
