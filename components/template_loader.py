@@ -11,6 +11,10 @@ def load_template(template_id):
         str: Contents of the template
     """
     with open("templates/templates.html", "r", encoding="utf-8") as f:
-        soup = BeautifulSoup(f.read(), 'html.parser')
+        soup = BeautifulSoup(f.read(), 'lxml')
         template = soup.find('template', id=template_id)
-        return template.decode_contents() if template else "" 
+        if template:
+            # Get the first div inside the template (the content)
+            content = template.find('div')
+            return str(content) if content else ""
+        return "" 
