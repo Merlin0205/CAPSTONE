@@ -1,6 +1,7 @@
 import pandas as pd
 import random
 from faker import Faker
+import numpy as np
 
 # Initialize Faker
 fake = Faker()
@@ -24,26 +25,57 @@ COLORS = ["Red", "Blue", "Black", "White", "Green", "Beige", "Pink", "Grey"]
 def generate_behavioral_data(num_customers=2000):
     """
     Generates a behavioral dataset with customer purchase information, including deliberate errors.
+    Values are set to create clearly separated groups for clustering.
     Returns:
         pandas.DataFrame: Dataset with customer behavioral data
     """
+    # Define clearly separated customer groups
+    customer_types = np.random.choice(['low', 'medium', 'high', 'premium'], size=num_customers, p=[0.3, 0.4, 0.2, 0.1])
+    
+    # Initialize empty lists for data
     behavioral_data = {
         "customer_id": [i for i in range(1, num_customers + 1)],
         "email": [fake.email() for _ in range(num_customers)],
-        "total_spent": [round(random.uniform(20, 800), 2) for _ in range(num_customers)],
-        "total_orders": [random.randint(1, 50) for _ in range(num_customers)],
+        "total_spent": [],
+        "total_orders": [],
         "avg_order_value": [],
-        "last_purchase_days_ago": [random.randint(0, 365) for _ in range(num_customers)],
-        "categories_bought": [random.randint(1, 6) for _ in range(num_customers)],
-        "brands_bought": [random.randint(1, 6) for _ in range(num_customers)]
+        "last_purchase_days_ago": [],
+        "categories_bought": [],
+        "brands_bought": []
     }
 
+    # Generate data based on customer type with more distinct differences
+    for ctype in customer_types:
+        if ctype == 'low':
+            behavioral_data["total_spent"].append(np.random.uniform(10, 100))
+            behavioral_data["total_orders"].append(np.random.randint(1, 3))
+            behavioral_data["last_purchase_days_ago"].append(np.random.randint(180, 365))
+            behavioral_data["categories_bought"].append(np.random.randint(1, 2))
+            behavioral_data["brands_bought"].append(np.random.randint(1, 2))
+        elif ctype == 'medium':
+            behavioral_data["total_spent"].append(np.random.uniform(200, 500))
+            behavioral_data["total_orders"].append(np.random.randint(5, 10))
+            behavioral_data["last_purchase_days_ago"].append(np.random.randint(60, 180))
+            behavioral_data["categories_bought"].append(np.random.randint(2, 4))
+            behavioral_data["brands_bought"].append(np.random.randint(2, 4))
+        elif ctype == 'high':
+            behavioral_data["total_spent"].append(np.random.uniform(800, 1500))
+            behavioral_data["total_orders"].append(np.random.randint(15, 25))
+            behavioral_data["last_purchase_days_ago"].append(np.random.randint(14, 60))
+            behavioral_data["categories_bought"].append(np.random.randint(4, 6))
+            behavioral_data["brands_bought"].append(np.random.randint(4, 7))
+        else:  # premium
+            behavioral_data["total_spent"].append(np.random.uniform(2000, 5000))
+            behavioral_data["total_orders"].append(np.random.randint(30, 50))
+            behavioral_data["last_purchase_days_ago"].append(np.random.randint(1, 14))
+            behavioral_data["categories_bought"].append(np.random.randint(6, 8))
+            behavioral_data["brands_bought"].append(np.random.randint(7, 10))
+
     # Calculate average order value
-    for i in range(num_customers):
-        total_orders = behavioral_data["total_orders"][i]
-        total_spent = behavioral_data["total_spent"][i]
-        avg_value = total_spent / total_orders if total_orders > 0 else 0
-        behavioral_data["avg_order_value"].append(round(avg_value, 2))
+    behavioral_data["avg_order_value"] = [
+        round(spent / orders if orders > 0 else 0, 2)
+        for spent, orders in zip(behavioral_data["total_spent"], behavioral_data["total_orders"])
+    ]
 
     # Generate invalid emails (10 random records)
     for _ in range(10):
@@ -75,18 +107,56 @@ def generate_behavioral_data(num_customers=2000):
 
 def generate_preference_data(num_customers=2000):
     """
-    Generates a preference dataset for customers.
+    Generates a preference dataset for customers with well-defined segments.
     Returns:
         pandas.DataFrame: Dataset with customer preferences
     """
+    # Define customer types for better segmentation
+    customer_types = np.random.choice(['budget', 'casual', 'fashion', 'luxury'], size=num_customers, p=[0.3, 0.4, 0.2, 0.1])
+    
     preference_data = {
         "customer_id": [i for i in range(1, num_customers + 1)],
-        "top_category": [random.choice(CATEGORIES) for _ in range(num_customers)],
-        "top_brand": [random.choice(BRANDS) for _ in range(num_customers)],
-        "price_preference_range": [random.randint(1, 3) for _ in range(num_customers)],
-        "discount_sensitivity": [round(random.uniform(0.0, 1.0), 2) for _ in range(num_customers)],
-        "luxury_preference_score": [random.randint(1, 5) for _ in range(num_customers)]
+        "top_category": [],
+        "top_brand": [],
+        "price_preference_range": [],
+        "discount_sensitivity": [],
+        "luxury_preference_score": []
     }
+    
+    # Generate data based on customer type
+    for ctype in customer_types:
+        if ctype == 'budget':
+            # Price-sensitive customers
+            preference_data["top_category"].append(random.choice(["Tops", "Bottoms", "Sportswear"]))  # basic categories
+            preference_data["top_brand"].append(random.choice(["H&M", "Zara", "Puma"]))  # affordable brands
+            preference_data["price_preference_range"].append(1)  # low price preference
+            preference_data["discount_sensitivity"].append(round(random.uniform(0.8, 1.0), 2))  # high discount sensitivity
+            preference_data["luxury_preference_score"].append(random.randint(1, 2))  # low luxury preference
+            
+        elif ctype == 'casual':
+            # Regular customers
+            preference_data["top_category"].append(random.choice(["Tops", "Bottoms", "Dresses", "Shoes"]))
+            preference_data["top_brand"].append(random.choice(["Nike", "Adidas", "Levi's", "Calvin Klein"]))
+            preference_data["price_preference_range"].append(2)
+            preference_data["discount_sensitivity"].append(round(random.uniform(0.4, 0.7), 2))
+            preference_data["luxury_preference_score"].append(random.randint(2, 3))
+            
+        elif ctype == 'fashion':
+            # Fashion enthusiasts
+            preference_data["top_category"].append(random.choice(["Dresses", "Outerwear", "Accessories"]))
+            preference_data["top_brand"].append(random.choice(["Ralph Lauren", "Tommy Hilfiger", "Versace"]))
+            preference_data["price_preference_range"].append(2)
+            preference_data["discount_sensitivity"].append(round(random.uniform(0.2, 0.5), 2))
+            preference_data["luxury_preference_score"].append(random.randint(3, 4))
+            
+        else:  # luxury
+            # Luxury customers
+            preference_data["top_category"].append(random.choice(["Outerwear", "Accessories", "Shoes"]))
+            preference_data["top_brand"].append(random.choice(["Gucci", "Prada", "Burberry"]))
+            preference_data["price_preference_range"].append(3)
+            preference_data["discount_sensitivity"].append(round(random.uniform(0.0, 0.3), 2))
+            preference_data["luxury_preference_score"].append(5)
+
     return pd.DataFrame(preference_data)
 
 def check_data_consistency(df):

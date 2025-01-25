@@ -1,0 +1,99 @@
+Customer Segmentation Analysis - Data Flow Documentation
+=================================================
+
+1. Data Generation and Storage
+----------------------------
+The application generates and stores three types of datasets:
+
+a) Behavioral Data (st.session_state.original_behavioral_data)
+- Customer purchase history and behavior
+- Clearly separated customer groups: low, medium, high, premium
+- Features: total_spent, total_orders, avg_order_value, last_purchase_days_ago, categories_bought, brands_bought
+- Includes deliberate errors for testing data quality checks
+
+b) Preference Data (st.session_state.original_preference_data)
+- Customer preferences and shopping habits
+- Distinct customer types: budget, casual, fashion, luxury
+- Features: top_category, top_brand, price_preference_range, discount_sensitivity, luxury_preference_score
+- Values distributed to create clear segments
+
+c) Inventory Data (st.session_state.original_inventory_data)
+- Product inventory information
+- Used for reference and potential future analysis
+
+2. Data Processing Flow
+----------------------
+1. Generate Data:
+   - Create original datasets with distinct customer segments
+   - Store originals in session state
+   - Create working copies for processing
+
+2. Check Data Consistency:
+   - Validate behavioral data
+   - Check for invalid emails
+   - Identify missing values
+   - Detect negative values
+   - Report all issues found
+
+3. Data Privacy:
+   - Anonymize customer data
+   - Remove or mask sensitive information
+   - Preserve analytical value while protecting privacy
+
+4. String to Numeric Conversion:
+   - Convert categorical variables to numeric
+   - Create and store mapping dictionaries
+   - Transform top_category and top_brand
+   - Preserve original meaning in mappings
+
+5. Data Combination and Normalization:
+   - Merge behavioral and preference data
+   - Select numeric columns for clustering
+   - Normalize data using StandardScaler
+   - Store normalized dataset for K-means
+
+3. Customer Segments Characteristics
+----------------------------------
+Behavioral Data Segments:
+- Low: Limited spending, few orders, infrequent purchases
+- Medium: Moderate spending, regular orders
+- High: Significant spending, frequent purchases
+- Premium: High spending, very frequent orders, recent activity
+
+Preference Data Segments:
+- Budget: Price-sensitive, high discount sensitivity, basic categories
+- Casual: Moderate preferences, mixed category interest
+- Fashion: Style-focused, lower discount sensitivity
+- Luxury: High-end preferences, low discount sensitivity
+
+4. Data Quality Measures
+-----------------------
+- Deliberate errors included for testing
+- Data consistency checks implemented
+- Privacy measures in place
+- Clear separation between segments
+- Normalized data for clustering
+
+5. Variable Naming Convention
+---------------------------
+Session State Variables:
+- original_behavioral_data: Raw behavioral dataset
+- original_preference_data: Raw preference dataset
+- original_inventory_data: Raw inventory dataset
+- behavioral_data: Working copy of behavioral data
+- preference_data: Working copy of preference data
+- inventory_data: Working copy of inventory data
+- combined_data: Merged dataset
+- normalized_data: Normalized dataset for clustering
+- cluster_labels: K-means cluster assignments
+- optimal_k: Optimal number of clusters
+- cluster_descriptions: AI-generated cluster descriptions
+- scaler: StandardScaler instance for normalization
+
+6. Notes
+--------
+- All original data structures are preserved
+- Working copies used for transformations
+- Clear separation between segments for better clustering
+- Comprehensive error checking and data validation
+- Privacy measures implemented throughout the process 
