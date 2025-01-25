@@ -1,99 +1,90 @@
 Customer Segmentation Analysis - Data Flow Documentation
 =================================================
 
-1. Data Generation and Storage
-----------------------------
-The application generates and stores three types of datasets:
+1. Data Generation and Initial Storage
+-----------------------------------
+Step 1: Generate Raw Datasets
+- st.session_state.original_behavioral_data: Raw behavioral dataset
+  * Customer IDs, emails, spending patterns, order history
+  * Customer segments: low, medium, high, premium
+  * Contains deliberate errors for testing
 
-a) Behavioral Data (st.session_state.original_behavioral_data)
-- Customer purchase history and behavior
-- Clearly separated customer groups: low, medium, high, premium
-- Features: total_spent, total_orders, avg_order_value, last_purchase_days_ago, categories_bought, brands_bought
-- Includes deliberate errors for testing data quality checks
+- st.session_state.original_preference_data: Raw preference dataset
+  * Customer preferences, favorite categories/brands
+  * Customer types: budget, casual, fashion, luxury
+  * Shopping habits and preferences
 
-b) Preference Data (st.session_state.original_preference_data)
-- Customer preferences and shopping habits
-- Distinct customer types: budget, casual, fashion, luxury
-- Features: top_category, top_brand, price_preference_range, discount_sensitivity, luxury_preference_score
-- Values distributed to create clear segments
+- st.session_state.original_inventory_data: Raw inventory dataset
+  * Product information and stock levels
+  * Reference data for analysis
 
-c) Inventory Data (st.session_state.original_inventory_data)
-- Product inventory information
-- Used for reference and potential future analysis
+2. Data Processing Pipeline
+-------------------------
+Step 2: Create Working Copies
+- st.session_state.behavioral_data: Working copy of behavioral data
+- st.session_state.preference_data: Working copy of preference data
+Output: Clean working copies for processing
 
-2. Data Processing Flow
+Step 3: Data Consistency Check
+- Input: st.session_state.behavioral_data
+- Checks: invalid emails, missing values, negative values
+- Output: List of issues and problem indices
+
+Step 4: Data Privacy Implementation
+- Input: st.session_state.behavioral_data
+- Process: Anonymize customer information
+- Output: st.session_state.clean_behavioral_data
+
+Step 5: String to Numeric Conversion
+- Input: st.session_state.preference_data
+- Process: Convert categories and brands to numeric values
+- Output: st.session_state.numeric_preference_data
+
+Step 6: Data Combination
+- Inputs: 
+  * st.session_state.clean_behavioral_data
+  * st.session_state.numeric_preference_data
+- Output: st.session_state.combined_data
+
+Step 7: Data Normalization
+- Input: st.session_state.combined_data
+- Process: StandardScaler normalization
+- Output: st.session_state.normalized_kmeans_data (Final dataset for clustering)
+
+3. Data Characteristics
+---------------------
+Behavioral Segments:
+- Low: Spending <$100, 1-2 orders
+- Medium: Spending $200-500, 5-10 orders
+- High: Spending $800-1500, 15-25 orders
+- Premium: Spending $2000-5000, 30-50 orders
+
+Preference Segments:
+- Budget: High discount sensitivity (0.8-1.0)
+- Casual: Medium discount sensitivity (0.4-0.7)
+- Fashion: Low discount sensitivity (0.2-0.5)
+- Luxury: Minimal discount sensitivity (0.0-0.3)
+
+4. Key Variables Summary
 ----------------------
-1. Generate Data:
-   - Create original datasets with distinct customer segments
-   - Store originals in session state
-   - Create working copies for processing
+Raw Data:
+- original_behavioral_data: Initial behavioral dataset
+- original_preference_data: Initial preference dataset
+- original_inventory_data: Initial inventory dataset
 
-2. Check Data Consistency:
-   - Validate behavioral data
-   - Check for invalid emails
-   - Identify missing values
-   - Detect negative values
-   - Report all issues found
+Processing Variables:
+- behavioral_data: Working behavioral data
+- preference_data: Working preference data
+- clean_behavioral_data: Privacy-compliant data
+- numeric_preference_data: Numerically encoded preferences
 
-3. Data Privacy:
-   - Anonymize customer data
-   - Remove or mask sensitive information
-   - Preserve analytical value while protecting privacy
+Final Analysis Data:
+- combined_data: Merged behavioral and preference data
+- normalized_kmeans_data: Normalized data for clustering
 
-4. String to Numeric Conversion:
-   - Convert categorical variables to numeric
-   - Create and store mapping dictionaries
-   - Transform top_category and top_brand
-   - Preserve original meaning in mappings
-
-5. Data Combination and Normalization:
-   - Merge behavioral and preference data
-   - Select numeric columns for clustering
-   - Normalize data using StandardScaler
-   - Store normalized dataset for K-means
-
-3. Customer Segments Characteristics
-----------------------------------
-Behavioral Data Segments:
-- Low: Limited spending, few orders, infrequent purchases
-- Medium: Moderate spending, regular orders
-- High: Significant spending, frequent purchases
-- Premium: High spending, very frequent orders, recent activity
-
-Preference Data Segments:
-- Budget: Price-sensitive, high discount sensitivity, basic categories
-- Casual: Moderate preferences, mixed category interest
-- Fashion: Style-focused, lower discount sensitivity
-- Luxury: High-end preferences, low discount sensitivity
-
-4. Data Quality Measures
------------------------
-- Deliberate errors included for testing
-- Data consistency checks implemented
-- Privacy measures in place
-- Clear separation between segments
-- Normalized data for clustering
-
-5. Variable Naming Convention
----------------------------
-Session State Variables:
-- original_behavioral_data: Raw behavioral dataset
-- original_preference_data: Raw preference dataset
-- original_inventory_data: Raw inventory dataset
-- behavioral_data: Working copy of behavioral data
-- preference_data: Working copy of preference data
-- inventory_data: Working copy of inventory data
-- combined_data: Merged dataset
-- normalized_data: Normalized dataset for clustering
-- cluster_labels: K-means cluster assignments
-- optimal_k: Optimal number of clusters
-- cluster_descriptions: AI-generated cluster descriptions
-- scaler: StandardScaler instance for normalization
-
-6. Notes
+5. Notes
 --------
-- All original data structures are preserved
-- Working copies used for transformations
-- Clear separation between segments for better clustering
-- Comprehensive error checking and data validation
-- Privacy measures implemented throughout the process 
+- All variable names follow st.session_state.{name} convention
+- Each step preserves original data while creating transformed versions
+- Clear data lineage from raw data to final clustering
+- Privacy and data quality maintained throughout process 
